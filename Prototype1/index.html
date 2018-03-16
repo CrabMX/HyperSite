@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>HyperSite</title>
+    <meta name="description" content="HyperSite">
+    <script src="./aframe-xr/aframe-master.js"></script>
+    <script src="./aframe-xr/three.xr.js"></script>
+    <script src="./aframe-xr/aframe-xr.js"></script>
+  </head>
+  <body>
+    <a-scene stats>
+      <a-assets>
+        <a-asset-item id="galleryTB" src="./assets/gallerytb/scene.gltf"></a-asset-item>
+        <img id="img1" src="./assets/img1.jpg">
+        <img id="img2" src="./assets/img2.jpg">
+        <img id="img3" src="./assets/img3.png">
+        <img id="img4" src="./assets/img4.jpg">
+        <img id="img5" src="./assets/img5.jpg">
+        <img id="img6" src="./assets/img6.png">
+        <img id="img7" src="./assets/img7.png">
+      </a-assets>
+
+      <a-entity reticle geometry="primitive: ring; radiusInner: 0.06; radiusOuter: 0.07"
+      material="color: #ffffff; transparent: ture; opacity: 0.5"></a-entity>
+
+    <a-entity id="gallery" visible="false">
+      <!-- importing tilt brush model in gltf format. -->
+      <a-gltf-model src="#galleryTB" rotation="0 127.15718865199547 0" position="0.25697334599806914 0 -3.776"></a-gltf-model>
+      <!-- setting up all the exhibition drawings in the correct location. -->
+      <a-image src="#img1" position="-0.016 1.303 -2.383771289343072" scale="4.733 4.733 4.733" width="1.024" height="0.427"></a-image>
+      <a-image src="#img2" position="5.735 1.404 0.005" scale="2.228 2.228 2.228" scale="4.733 4.733 4.733" width="1.024" height="0.725"></a-image>
+      <a-image src="#img3" position="6.946197596355166 1.2326811655618645 -2.775" rotation="0 -90.01166961505232 0" height="0.723" width="1.024" scale="3.242 3.242 3.242"></a-image>
+      <a-image src="#img4" position="-6.788 1.259 -2.689" rotation="0 90.012 0" height="1.699" width="1.200" scale="1.441287362110757 1.441287362110757 1.441287362110757"></a-image>
+      <a-image src="#img5" position="-6.4694164143517625 1.303 0.043" rotation="0 -2.177 0" height="1.699" width="1.200" scale="0.945 0.945 0.945"></a-image>      
+      <a-image src="#img6" position="-3.483 1.234 -6.476" scale="4.656 4.656 4.656" width="1.024" height="0.524"></a-image>
+      <a-image src="#img7" position="3.785 1.25 -6.457" height="0.527" width="1.024" scale="4.733 4.733 4.733"></a-image>
+      
+      <!-- setting up lights. -->
+      <a-entity position="0 3.803 -8.175" aframe-injected="" light="color:#8a95ff;type:ambient;intensity:1"></a-entity>
+      <a-entity position="0 2.023 2.564" aframe-injected="" light="color:#ff8ae2;intensity:0.8;groundColor:#000000"></a-entity>
+    </a-entity>
+    </a-scene>
+    
+    <!-- setting up locator function. -->
+    <script>
+      this.scene = document.querySelector('a-scene');
+      this.scene.renderer.gammaOutput = true;
+      this.gallery = document.querySelector('#gallery');
+      this.reticle = document.querySelector('[reticle]');
+      this.touched = this.touched.bind(this)
+      this.reticle.addEventListener('touched', this.touched);
+      function touched(){
+        this.reticle.removeEventListener('touched', this.touched);
+        this.gallery.setAttribute('position', this.reticle.getAttribute('position'));
+        var rotationOnClick = Math.atan2( ( this.scene.camera.getWorldPosition().x - this.gallery.getAttribute('position').x ), ( this.scene.camera.getWorldPosition().z - this.gallery.getAttribute('position').z ) );
+        rotationOnClick = THREE.Math.radToDeg(rotationOnClick);
+        this.gallery.setAttribute('rotation', {y: rotationOnClick});
+        this.reticle.parentNode.removeChild(this.reticle);
+        this.gallery.setAttribute('visible', true);
+      }
+  </script>
+  </body>
+</html>
